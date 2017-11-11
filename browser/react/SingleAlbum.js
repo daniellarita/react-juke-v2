@@ -1,14 +1,15 @@
 import React from 'react';
 
 export default class extends React.Component {
+
   render (props) {
-    const album = this.props.selectedAlbum
+    const album = this.props.selectedAlbum;
     return (
       <div className="col-xs-10">
         <div className="album">
           <div>
             <h3></h3>
-            <img src="https://placeholdit.imgix.net/~text?txtsize=33&txt=IshouldBEanIMAGE&w=300&h=300" className="img-thumbnail" />
+            <img src= { album.imageUrl } />
           </div>
           <table className='table'>
             <thead>
@@ -24,7 +25,7 @@ export default class extends React.Component {
                 return (
                   <tr key={song.id}>
                     <td>
-                      <button className="btn btn-default btn-xs">
+                      <button onClick={() => this.props.start(song.id)} className="btn btn-default btn-xs">
                         <span className="glyphicon glyphicon-play"></span>
                       </button>
                     </td>

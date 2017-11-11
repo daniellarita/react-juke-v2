@@ -21917,6 +21917,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var audio = document.createElement('audio');
+	
 	var _class = function (_React$Component) {
 	  _inherits(_class, _React$Component);
 	
@@ -21930,6 +21932,8 @@
 	      selectedAlbum: {}
 	    };
 	    _this.selectAlbum = _this.selectAlbum.bind(_this);
+	    _this.showAlbums = _this.showAlbums.bind(_this);
+	    _this.start = _this.start.bind(_this);
 	    return _this;
 	  }
 	
@@ -21956,13 +21960,33 @@
 	      _axios2.default.get('/api/albums/' + albumId).then(function (res) {
 	        return res.data;
 	      }).then(function (album) {
+	        album.imageUrl = '/api/albums/' + album.id + '/image';
 	        _this3.setState({ selectedAlbum: album });
 	      });
 	    }
 	  }, {
+	    key: 'showAlbums',
+	    value: function showAlbums() {
+	      this.setState({ selectedAlbum: {} });
+	    }
+	  }, {
+	    key: 'start',
+	    value: function start(songId) {
+	      console.log(songId);
+	      _axios2.default.get('api/songs/' + songId + '/audio').then(function (res) {
+	        console.log(res, "audio for correct song");
+	      });
+	      // audio.src = 'https://learndotresources.s3.amazonaws.com/workshop/5616dbe5a561920300b10cd7/Dexter_Britain_-_03_-_The_Stars_Are_Out_Interlude.mp3';
+	      // audio.load();
+	      // audio.play();
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var album = _react2.default.createElement(_SingleAlbum2.default, { selectedAlbum: this.state.selectedAlbum });
+	      var album = _react2.default.createElement(_SingleAlbum2.default, {
+	        selectedAlbum: this.state.selectedAlbum,
+	        start: this.start
+	      });
 	      var albumList = _react2.default.createElement(_Albums2.default, {
 	        albums: this.state.albums,
 	        handleClick: this.selectAlbum
@@ -21971,7 +21995,9 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { id: 'main', className: 'container-fluid' },
-	        _react2.default.createElement(_Sidebar2.default, null),
+	        _react2.default.createElement(_Sidebar2.default, {
+	          handleClick: this.showAlbums
+	        }),
 	        albumIsSelected ? album : albumList,
 	        _react2.default.createElement(_Footer2.default, null)
 	      );
@@ -22019,6 +22045,8 @@
 	  _createClass(_class, [{
 	    key: "render",
 	    value: function render() {
+	      var _this2 = this;
+	
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "col-xs-2" },
@@ -22034,7 +22062,9 @@
 	              { className: "menu-item active" },
 	              _react2.default.createElement(
 	                "a",
-	                { href: "#" },
+	                { onClick: function onClick() {
+	                    return _this2.props.handleClick();
+	                  }, href: "#" },
 	                "ALBUMS"
 	              )
 	            )
@@ -22192,7 +22222,7 @@
 	                  _react2.default.createElement(
 	                    "a",
 	                    { onClick: function onClick() {
-	                        return _this2.props.handleClick(album.id);
+	                        return _this2.props.handleClick(album.id, album.imageUrl);
 	                      }, className: "thumbnail", href: "#" },
 	                    _react2.default.createElement("img", { src: album.imageUrl }),
 	                    _react2.default.createElement(
@@ -22266,6 +22296,8 @@
 	  _createClass(_class, [{
 	    key: "render",
 	    value: function render(props) {
+	      var _this2 = this;
+	
 	      var album = this.props.selectedAlbum;
 	      return _react2.default.createElement(
 	        "div",
@@ -22277,7 +22309,7 @@
 	            "div",
 	            null,
 	            _react2.default.createElement("h3", null),
-	            _react2.default.createElement("img", { src: "https://placeholdit.imgix.net/~text?txtsize=33&txt=IshouldBEanIMAGE&w=300&h=300", className: "img-thumbnail" })
+	            _react2.default.createElement("img", { src: album.imageUrl })
 	          ),
 	          _react2.default.createElement(
 	            "table",
@@ -22318,7 +22350,9 @@
 	                    null,
 	                    _react2.default.createElement(
 	                      "button",
-	                      { className: "btn btn-default btn-xs" },
+	                      { onClick: function onClick() {
+	                          return _this2.props.start(song.id);
+	                        }, className: "btn btn-default btn-xs" },
 	                      _react2.default.createElement("span", { className: "glyphicon glyphicon-play" })
 	                    )
 	                  ),
